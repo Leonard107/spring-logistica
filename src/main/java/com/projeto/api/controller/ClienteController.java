@@ -16,7 +16,7 @@ public class ClienteController {
 		Cliente cliente1 = new Cliente();
 		
 		cliente1.setId(1L);
-		cliente1.setNome("Leonard");
+		cliente1.setNome("Leonard Richard");
 		cliente1.setTelefone("99247-1050");
 		cliente1.setEmail("leonardrichard107@gmail.com");
 		
