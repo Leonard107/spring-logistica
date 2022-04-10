@@ -61,7 +61,7 @@ public class ClienteController {
 			return ResponseEntity.notFound().build();
 		}
 		
-		cliente.setId(clienteId);
+		//cliente.setId(clienteId);
 		cliente = clienteRepository.save(cliente);
 		
 		return ResponseEntity.ok(cliente);
