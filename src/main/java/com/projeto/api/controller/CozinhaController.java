@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.projeto.api.model.CozinhasXmlWrapper;
 import com.projeto.domain.model.Cozinha;
 import com.projeto.domain.repository.CozinhaRepository;
+import com.projeto.domain.service.CadastroCozinhaService;
 
 @RestController
 @RequestMapping("/cozinhas")
@@ -29,6 +29,9 @@ public class CozinhaController {
 
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
+	
+	@Autowired
+	private CadastroCozinhaService cadastroCozinhaService;
 
 	@GetMapping
 	public List<Cozinha> listar() {
@@ -56,7 +59,7 @@ public class CozinhaController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cozinha adicionar(@RequestBody Cozinha cozinha) {
-		return cozinhaRepository.salvar(cozinha);
+		return cadastroCozinhaService.salvar(cozinha);
 	}
 
 	@PutMapping(value = "/{cozinhaId}")
@@ -69,7 +72,7 @@ public class CozinhaController {
 			// cozinhaAtual.setNome(cozinha.getNome());
 			BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
 
-			cozinhaAtual = cozinhaRepository.salvar(cozinhaAtual);
+			cozinhaAtual = cadastroCozinhaService.salvar(cozinhaAtual);
 
 			return ResponseEntity.ok(cozinhaAtual);
 
