@@ -18,11 +18,8 @@ public class ExcluirCozinhaMain {
 		CozinhaRepository cozinhaRepository =  applicationContext.getBean(CozinhaRepository.class);
 		
 		Cozinha cozinha = new Cozinha();
-		cozinha.setId(1L);
-		
-		
-		cozinhaRepository.remover(cozinha);
-
+			
+		cozinhaRepository.remover(cozinha.getId());;
 
 	}
 
