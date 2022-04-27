@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.projeto.api.model.CozinhasXmlWrapper;
+import com.projeto.domain.exception.EntidadeEmUsoException;
+import com.projeto.domain.exception.EntidadeNaoEncontradaException;
 import com.projeto.domain.model.Cozinha;
 import com.projeto.domain.repository.CozinhaRepository;
 import com.projeto.domain.service.CadastroCozinhaService;
@@ -29,7 +31,7 @@ public class CozinhaController {
 
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
-	
+
 	@Autowired
 	private CadastroCozinhaService cadastroCozinhaService;
 
@@ -84,24 +86,20 @@ public class CozinhaController {
 
 	@DeleteMapping(value = "/{cozinhaId}")
 	public ResponseEntity<Cozinha> remover(@PathVariable Long cozinhaId) {
-		
+
 		try {
-			Cozinha cozinha = cozinhaRepository.buscar(cozinhaId);
 
-			if (cozinha != null) {
+			cadastroCozinhaService.excluir(cozinhaId);
 
-				cozinhaRepository.remover(cozinha);
+			return ResponseEntity.noContent().build();
 
-				return ResponseEntity.noContent().build();
-
-			}
+		} catch (EntidadeNaoEncontradaException e) {
 
 			return ResponseEntity.notFound().build();
-		} catch (DataIntegrityViolationException e) {
+
+		} catch (EntidadeEmUsoException e) {
+
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
 		}
-		
-
 	}
-
 }
