@@ -16,12 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projeto.domain.exception.EntidadeNaoEncontradaException;
-import com.projeto.domain.model.Cozinha;
 import com.projeto.domain.model.Restaurante;
 import com.projeto.domain.repository.RestauranteRepository;
 import com.projeto.domain.service.CadastroRestauranteService;
@@ -106,18 +104,14 @@ public class RestauranteController {
 	private void merge(Map<String, Object> dadosOrigem, Restaurante restauranteDestino) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		Restaurante restauranteOrigem = objectMapper.convertValue(dadosOrigem, Restaurante.class);
-		
-		System.out.println(restauranteOrigem);
-		
+				
 		dadosOrigem.forEach((nomePropriedade, valorPropriedade) -> {
 			
 			Field field = ReflectionUtils.findField(Restaurante.class, nomePropriedade);
 			field.setAccessible(true);
 			
 			Object novoValor = ReflectionUtils.getField(field, restauranteOrigem);
-			
-			System.out.println(nomePropriedade + " = " + valorPropriedade + " = " + novoValor);
-			
+						
 			ReflectionUtils.setField(field, restauranteDestino, novoValor);
 		});
 	}
