@@ -1,6 +1,6 @@
 package com.projeto.jpa;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -21,9 +21,9 @@ public class BuscaCozinhaMain {
 		
 		
 		
-		Cozinha cozinhas = cozinhaRepository.buscar(1L);
+		Optional<Cozinha> cozinhas = cozinhaRepository.findById(1L);
 		
-			System.out.println(cozinhas.getNome());
+			System.out.println(cozinhas.get());
 		
 	}
 

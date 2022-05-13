@@ -19,7 +19,7 @@ public class ExcluirCozinhaMain {
 		
 		Cozinha cozinha = new Cozinha();
 			
-		cozinhaRepository.remover(cozinha.getId());;
+		cozinhaRepository.deleteById(cozinha.getId());;
 
 	}
 

@@ -1,7 +1,5 @@
 package com.projeto.jpa;
 
-import java.util.List;
-
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
@@ -24,7 +22,7 @@ public class AlteracaoCozinhaMain {
 		cozinha.setNome("Brasileira");
 		
 		
-		cozinhaRepository.salvar(cozinha);
+		cozinhaRepository.save(cozinha);
 
 
 	}
