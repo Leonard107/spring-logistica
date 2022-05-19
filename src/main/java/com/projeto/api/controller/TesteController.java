@@ -1,10 +1,19 @@
 package com.projeto.api.controller;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.projeto.domain.model.Cozinha;
+import com.projeto.domain.model.Restaurante;
 import com.projeto.domain.repository.CozinhaRepository;
+import com.projeto.domain.repository.RestauranteRepository;
 
 @RestController
 @RequestMapping(value = "/teste")
@@ -13,9 +22,28 @@ public class TesteController {
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
 	
-	//@GetMapping(value = "/cozinhas/por-nome")
-	//public List<Cozinha> cozinhasPorNome(@RequestParam("nome") String nome){
-	//	return cozinhaRepository.consultarPorNome(nome);
-	//}
+	@Autowired
+	private RestauranteRepository restauranteRepository;
+	
+	@GetMapping(value = "/cozinhas/por-nome")
+	public List<Cozinha> cozinhasPorNome(@RequestParam("nome") String nome){
+		return cozinhaRepository.findTodasByNomeContaining(nome);
+	}
+	
+	
+	@GetMapping("/cozinhas/unica-por-nome")
+	public Optional<Cozinha> cozinhaPorNome(String nome) {
+		return cozinhaRepository.findByNome(nome);
+	}
+	
+	@GetMapping("/restaurantes/por-taxa-frete")
+	public List<Restaurante> restaurantePorTaxaFrete(BigDecimal taxaInicial, BigDecimal taxaFinal) {
+		return restauranteRepository.findBytaxaFreteBetween(taxaInicial, taxaFinal);
+	}
+	
+	@GetMapping("/restaurantes/por-nome-e-idcozinha")
+	public List<Restaurante> restaurantePorNomeEiDCozinha(String nome, Long cozinhaId) {
+		return restauranteRepository.findByNomeContainingAndCozinhaId(nome, cozinhaId);
+	}
 
 }

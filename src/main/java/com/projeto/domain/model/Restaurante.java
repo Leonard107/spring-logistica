@@ -1,5 +1,7 @@
 package com.projeto.domain.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,7 +27,7 @@ public class Restaurante {
 	private String nome;
 	
 	@Column(name = "taxa_frete", nullable = false)
-	private Double taxaFrete;
+	private BigDecimal taxaFrete;
 	
 	@ManyToOne
 	@JoinColumn(name = "cozinha_id", nullable = false)
