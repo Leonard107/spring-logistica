@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.projeto.domain.model.Restaurante;
 
 @Repository
-public interface RestauranteRepository extends JpaRepository<Restaurante, Long> {
+public interface RestauranteRepository extends JpaRepository<Restaurante, Long>, CustomizedRestauranteRepository  {
 	
 	List<Restaurante> findBytaxaFreteBetween(BigDecimal taxaInicial, BigDecimal taxaFinal);
 	
