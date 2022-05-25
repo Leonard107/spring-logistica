@@ -1,5 +1,7 @@
 package com.projeto.api.controller;
 
+
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -14,8 +16,7 @@ import com.projeto.domain.model.Cozinha;
 import com.projeto.domain.model.Restaurante;
 import com.projeto.domain.repository.CozinhaRepository;
 import com.projeto.domain.repository.RestauranteRepository;
-import com.projeto.infrastructure.repository.spec.RestauranteComFreteGratisSpec;
-import com.projeto.infrastructure.repository.spec.RestauranteComNomeSemelhanteSpec;
+import com.projeto.infrastructure.repository.spec.RestauranteSpecs;
 
 @RestController
 @RequestMapping(value = "/teste")
@@ -55,10 +56,10 @@ public class TesteController {
 	
 	@GetMapping("/restaurantes/com-frete-gratis")
 	public List<Restaurante> restauranteComFreteGratis(String nome) {
-		var comFreteGratis = new RestauranteComFreteGratisSpec();
-		var comNomeSemelhante = new RestauranteComNomeSemelhanteSpec(nome);
+		//var comFreteGratis = new RestauranteComFreteGratisSpec();
+		//var comNomeSemelhante = new RestauranteComNomeSemelhanteSpec(nome);
 		
-		return restauranteRepository.findAll(comFreteGratis.and(comNomeSemelhante));
+		return restauranteRepository.findAll(RestauranteSpecs.comFreteGratis().and(RestauranteSpecs.comNomeSemelhante(nome)));
 	}
 
 
