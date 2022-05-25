@@ -14,6 +14,8 @@ import com.projeto.domain.model.Cozinha;
 import com.projeto.domain.model.Restaurante;
 import com.projeto.domain.repository.CozinhaRepository;
 import com.projeto.domain.repository.RestauranteRepository;
+import com.projeto.infrastructure.repository.spec.RestauranteComFreteGratisSpec;
+import com.projeto.infrastructure.repository.spec.RestauranteComNomeSemelhanteSpec;
 
 @RestController
 @RequestMapping(value = "/teste")
@@ -49,6 +51,14 @@ public class TesteController {
 	@GetMapping("/restaurantes/por-nome-e-frete")
 	public List<Restaurante> restaurantePorNomeFrete(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal) {
 		return restauranteRepository.find(nome, taxaFreteInicial, taxaFreteFinal);
+	}
+	
+	@GetMapping("/restaurantes/com-frete-gratis")
+	public List<Restaurante> restauranteComFreteGratis(String nome) {
+		var comFreteGratis = new RestauranteComFreteGratisSpec();
+		var comNomeSemelhante = new RestauranteComNomeSemelhanteSpec(nome);
+		
+		return restauranteRepository.findAll(comFreteGratis.and(comNomeSemelhante));
 	}
 
 
