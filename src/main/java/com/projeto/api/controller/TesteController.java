@@ -59,7 +59,7 @@ public class TesteController {
 		//var comFreteGratis = new RestauranteComFreteGratisSpec();
 		//var comNomeSemelhante = new RestauranteComNomeSemelhanteSpec(nome);
 		
-		return restauranteRepository.findAll(RestauranteSpecs.comFreteGratis().and(RestauranteSpecs.comNomeSemelhante(nome)));
+		return restauranteRepository.findComFreteGratis(nome);
 	}
 
 
