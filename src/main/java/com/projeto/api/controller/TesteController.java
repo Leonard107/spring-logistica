@@ -16,7 +16,6 @@ import com.projeto.domain.model.Cozinha;
 import com.projeto.domain.model.Restaurante;
 import com.projeto.domain.repository.CozinhaRepository;
 import com.projeto.domain.repository.RestauranteRepository;
-import com.projeto.infrastructure.repository.spec.RestauranteSpecs;
 
 @RestController
 @RequestMapping(value = "/teste")
@@ -60,6 +59,11 @@ public class TesteController {
 		//var comNomeSemelhante = new RestauranteComNomeSemelhanteSpec(nome);
 		
 		return restauranteRepository.findComFreteGratis(nome);
+	}
+	
+	@GetMapping("/restaurantes/primeiro")
+	public Optional<Restaurante> restaurantePrimeiro() {
+		return restauranteRepository.buscarPrimeiro();
 	}
 
 

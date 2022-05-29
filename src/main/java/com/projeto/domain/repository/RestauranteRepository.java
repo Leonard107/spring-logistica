@@ -3,8 +3,6 @@ package com.projeto.domain.repository;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -12,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.projeto.domain.model.Restaurante;
 
 @Repository
-public interface RestauranteRepository extends JpaRepository<Restaurante, Long>, CustomizedRestauranteRepository,
+public interface RestauranteRepository extends CustomJpaRepository<Restaurante, Long>, CustomizedRestauranteRepository,
 JpaSpecificationExecutor<Restaurante>{
 	
 	List<Restaurante> findBytaxaFreteBetween(BigDecimal taxaInicial, BigDecimal taxaFinal);
