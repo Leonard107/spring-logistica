@@ -13,6 +13,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -27,7 +28,7 @@ public class RestauranteRepositoryImpl implements CustomizedRestauranteRepositor
 	@PersistenceContext
 	private EntityManager manager;
 	
-	@Autowired
+	@Autowired @Lazy
 	private RestauranteRepository restauranteRepository;
 	
 	@Override
