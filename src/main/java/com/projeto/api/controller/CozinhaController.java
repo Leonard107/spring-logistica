@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.projeto.domain.exception.EntidadeEmUsoException;
 import com.projeto.domain.exception.EntidadeNaoEncontradaException;
@@ -67,7 +68,7 @@ public class CozinhaController {
 			// cozinhaAtual.setNome(cozinha.getNome());
 			BeanUtils.copyProperties(cozinha, cozinhaAtual.get(), "id");
 
-		Cozinha	cozinhaSalva = cadastroCozinhaService.salvar(cozinhaAtual.get());
+			Cozinha cozinhaSalva = cadastroCozinhaService.salvar(cozinhaAtual.get());
 
 			return ResponseEntity.ok(cozinhaSalva);
 
@@ -77,22 +78,33 @@ public class CozinhaController {
 
 	}
 
+	/*
+	 * @DeleteMapping(value = "/{cozinhaId}") public ResponseEntity<?>
+	 * remover(@PathVariable Long cozinhaId) {
+	 * 
+	 * try {
+	 * 
+	 * cadastroCozinhaService.excluir(cozinhaId);
+	 * 
+	 * return ResponseEntity.noContent().build();
+	 * 
+	 * } catch (EntidadeNaoEncontradaException e) {
+	 * 
+	 * return ResponseEntity.notFound().build();
+	 * 
+	 * } catch (EntidadeEmUsoException e) {
+	 * 
+	 * return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage()); } }
+	 */
+
 	@DeleteMapping(value = "/{cozinhaId}")
-	public ResponseEntity<?> remover(@PathVariable Long cozinhaId) {
-
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void remover(@PathVariable Long cozinhaId) {
 		try {
-
 			cadastroCozinhaService.excluir(cozinhaId);
-
-			return ResponseEntity.noContent().build();
-
-		//} catch (EntidadeNaoEncontradaException e) {
-
-		//	return ResponseEntity.notFound().build();
-
-		} catch (EntidadeEmUsoException e) {
-		
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-		} 
+		}catch(EntidadeNaoEncontradaException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, 
+					String.format("Não existe um cadastro de cozinha com código %d", cozinhaId));
+		}
 	}
 }
