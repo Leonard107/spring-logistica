@@ -86,12 +86,12 @@ public class CozinhaController {
 
 			return ResponseEntity.noContent().build();
 
-		} catch (EntidadeNaoEncontradaException e) {
+		//} catch (EntidadeNaoEncontradaException e) {
 
-			return ResponseEntity.notFound().build();
+		//	return ResponseEntity.notFound().build();
 
 		} catch (EntidadeEmUsoException e) {
-
+		
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
 		} 
 	}
