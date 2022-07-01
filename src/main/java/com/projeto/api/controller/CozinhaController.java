@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.projeto.domain.exception.EntidadeEmUsoException;
 import com.projeto.domain.exception.EntidadeNaoEncontradaException;
 import com.projeto.domain.model.Cozinha;
 import com.projeto.domain.repository.CozinhaRepository;
@@ -100,11 +99,7 @@ public class CozinhaController {
 	@DeleteMapping(value = "/{cozinhaId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void remover(@PathVariable Long cozinhaId) {
-		try {
-			cadastroCozinhaService.excluir(cozinhaId);
-		}catch(EntidadeNaoEncontradaException e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, 
-					String.format("Não existe um cadastro de cozinha com código %d", cozinhaId));
-		}
+		cadastroCozinhaService.excluir(cozinhaId);
+
 	}
 }
