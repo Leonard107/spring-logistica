@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.projeto.domain.exception.EntidadeEmUsoException;
 import com.projeto.domain.exception.EntidadeNaoEncontradaException;
+import com.projeto.domain.exception.NegocioException;
 import com.projeto.domain.model.Cidade;
 import com.projeto.domain.repository.CidadeRepository;
 import com.projeto.domain.service.CadastroCidadeService;
@@ -47,7 +48,13 @@ public class CidadeController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cidade adicionar(@RequestBody Cidade cidade) {
 
-		return cadastroCidadeService.salvar(cidade);
+		try {
+			return cadastroCidadeService.salvar(cidade);
+
+		} catch (EntidadeNaoEncontradaException e) {
+
+			throw new NegocioException(e.getMessage());
+		}
 
 	}
 
@@ -58,7 +65,12 @@ public class CidadeController {
 
 		BeanUtils.copyProperties(cidade, cidadeAtual, "id");
 
-		return cadastroCidadeService.salvar(cidadeAtual);
+		try {
+
+			return cadastroCidadeService.salvar(cidadeAtual);
+		} catch (EntidadeNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage());
+		}
 	}
 
 	@DeleteMapping("/{cidadeId}")
