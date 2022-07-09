@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.projeto.domain.exception.EntidadeEmUsoException;
 import com.projeto.domain.exception.EntidadeNaoEncontradaException;
+import com.projeto.domain.exception.EstadoNaoEncontradoException;
 import com.projeto.domain.model.Estado;
 import com.projeto.domain.repository.EstadoRepository;
 
@@ -14,7 +15,6 @@ import com.projeto.domain.repository.EstadoRepository;
 public class CadastroEstadoService {
 
 	private static final String MSG_ESTADO_EM_USO = "Estado de código %d não pode ser removido, pois está em uso";
-	private static final String MSG_ESTADO_NAO_ENCONTRADO = "Não existe um cadastro de estado com código %d";
 	
 	@Autowired
 	private EstadoRepository estadoRepository;
@@ -27,8 +27,7 @@ public class CadastroEstadoService {
 		try {
 			estadoRepository.deleteById(estadoId);
 		} catch (EmptyResultDataAccessException e) {
-			throw new EntidadeNaoEncontradaException(
-					String.format(MSG_ESTADO_NAO_ENCONTRADO, estadoId));
+			throw new EstadoNaoEncontradoException(estadoId);
 			
 		} catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(
@@ -38,7 +37,7 @@ public class CadastroEstadoService {
 	
 	public Estado buscarOufalhar(long estadoId) {
 		return estadoRepository.findById(estadoId).
-				orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(MSG_ESTADO_NAO_ENCONTRADO, estadoId)));
+				orElseThrow(() -> new EstadoNaoEncontradoException((estadoId)));
 	}
 
 }

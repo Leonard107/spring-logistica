@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.projeto.domain.exception.CadastroFormaPagamentoNaoEncontradaException;
 import com.projeto.domain.exception.EntidadeEmUsoException;
 import com.projeto.domain.exception.EntidadeNaoEncontradaException;
 import com.projeto.domain.model.FormaPagamento;
@@ -24,8 +25,7 @@ public class CadastroFormaPagamentoService {
 		try {
 			formaPagamentoRepository.deleteById(formaPagamentoId);
 		} catch (EmptyResultDataAccessException e) {
-			throw new EntidadeNaoEncontradaException(
-					String.format("Não existe um cadastro de formadePagamento com código %d", formaPagamentoId));
+			throw new CadastroFormaPagamentoNaoEncontradaException(formaPagamentoId);
 			
 		} catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(

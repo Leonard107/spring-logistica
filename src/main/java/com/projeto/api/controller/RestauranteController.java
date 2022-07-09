@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.projeto.domain.exception.CozinhaNaoEncontradaException;
 import com.projeto.domain.exception.EntidadeNaoEncontradaException;
 import com.projeto.domain.exception.NegocioException;
 import com.projeto.domain.model.Restaurante;
@@ -52,10 +53,8 @@ public class RestauranteController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public Restaurante adicionar(@RequestBody Restaurante restaurante) {
 		try {
-
 			return cadastroRestauranteService.salvar(restaurante);
-
-		} catch (EntidadeNaoEncontradaException e) {
+		} catch (CozinhaNaoEncontradaException e) {
 			throw new NegocioException(e.getMessage());
 		}
 
@@ -63,15 +62,15 @@ public class RestauranteController {
 
 	@PutMapping(value = "/{restauranteId}")
 	public Restaurante atualizar(@PathVariable Long restauranteId, @RequestBody Restaurante restaurante) {
-
+		try {
 		Restaurante restauranteAtual = cadastroRestauranteService.buscarOuFalhar(restauranteId);
 
 		BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formasPagamento", "endereco", "dataCadastro",
 				"produtos");
-		try {
+		
 			return cadastroRestauranteService.salvar(restauranteAtual);
 
-		} catch (EntidadeNaoEncontradaException e) {
+		} catch (CozinhaNaoEncontradaException e) {
 			throw new NegocioException(e.getMessage());
 		}
 
