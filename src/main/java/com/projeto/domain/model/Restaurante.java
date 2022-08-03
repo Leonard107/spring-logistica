@@ -27,7 +27,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.projeto.Groups;
+import com.projeto.validation.Groups;
+import com.projeto.validation.TaxaFrete;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -47,7 +48,8 @@ public class Restaurante {
 	private String nome;
 	
 	@NotNull
-	@PositiveOrZero
+	//@PositiveOrZero
+	@TaxaFrete
 	@Column(name = "taxa_frete", nullable = false)
 	private BigDecimal taxaFrete;
 	

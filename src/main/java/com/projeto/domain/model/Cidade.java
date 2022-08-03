@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.groups.ConvertGroup;
 import javax.validation.groups.Default;
 
-import com.projeto.Groups;
+import com.projeto.validation.Groups;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -1,4 +1,4 @@
-package com.projeto;
+package com.projeto.validation;
 
 public interface Groups {
 	
