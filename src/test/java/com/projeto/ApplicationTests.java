@@ -11,6 +11,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.validation.ConstraintViolationException;
 
+import com.projeto.domain.exception.CozinhaNaoEncontradaException;
+import com.projeto.domain.exception.EntidadeEmUsoException;
 import com.projeto.domain.model.Cozinha;
 import com.projeto.domain.service.CadastroCozinhaService;
 
@@ -47,6 +49,25 @@ class ApplicationTests {
 				});
 		
 		assertThat(erroEsperado).isNotNull();
+	}
+	
+	@Test
+	public void deveFalhar_QuandoExcluirCozinhaEmUso() {
+		EntidadeEmUsoException erroEsperado = Assertions.assertThrows(EntidadeEmUsoException.class, () -> {
+			cadastroCozinhaService.excluir(1L);
+		});
+		
+		assertThat(erroEsperado).isNull();
+		
+	}
+	
+
+	public void deveFalhar_QuandoExcluirCozinhaInexistente() {
+		CozinhaNaoEncontradaException erroEsperado = Assertions.assertThrows(CozinhaNaoEncontradaException.class, () -> {
+			cadastroCozinhaService.excluir(100L);
+		});
+		
+		assertThat(erroEsperado).isNull();
 	}
 	
 	
