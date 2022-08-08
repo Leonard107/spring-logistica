@@ -22,7 +22,7 @@ class ApplicationTests {
 	private CadastroCozinhaService cadastroCozinhaService;
 	
 	@Test
-	public void testarCadastroCozinhaComSucesso() {
+	public void deveAtribuirId_QuandoCadastrarCozinhaComDadosCorretos() {
 		
 		//Cenário
 		Cozinha novaCozinha = new Cozinha();
@@ -38,7 +38,7 @@ class ApplicationTests {
 	}
 	
 	@Test
-	public void testarCadastroCozinhaSemNome() {
+	public void deveFalhar_QuandoCadastrarCozinhaSemNome() {
 		Cozinha novaCozinha = new Cozinha();
 		novaCozinha.setNome(null);
 		ConstraintViolationException erroEsperado = 
