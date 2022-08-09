@@ -18,7 +18,7 @@ import com.projeto.domain.service.CadastroCozinhaService;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-class ApplicationTests {
+class ApplicationIT {
 	
 	@Autowired
 	private CadastroCozinhaService cadastroCozinhaService;
@@ -57,7 +57,7 @@ class ApplicationTests {
 			cadastroCozinhaService.excluir(1L);
 		});
 		
-		assertThat(erroEsperado).isNull();
+		assertThat(erroEsperado).isNotNull();
 		
 	}
 	
@@ -67,7 +67,7 @@ class ApplicationTests {
 			cadastroCozinhaService.excluir(100L);
 		});
 		
-		assertThat(erroEsperado).isNull();
+		assertThat(erroEsperado).isNotNull();
 	}
 	
 	
