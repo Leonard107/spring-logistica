@@ -19,6 +19,9 @@ import com.projeto.util.DatabaseCleaner;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
+import static org.hamcrest.Matchers.equalTo;
+
+
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("/application-test.properties")
@@ -58,12 +61,8 @@ class CadastroCozinhaIT {
 	
 	@Test
 	public void deveConter2Cozinhas_QuandoConsultarCozinhas() {
-		
-		RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
-		
+				
 		RestAssured.given()
-			.basePath("/cozinhas")
-			.port(port)
 			.accept(ContentType.JSON)
 		.when()
 			.get()
@@ -93,6 +92,32 @@ class CadastroCozinhaIT {
 		Cozinha cozinha2 = new Cozinha();
 		cozinha2.setNome("Americana");
 		cozinhaRepository.save(cozinha2);
+	}
+	
+		
+	@Test
+	public void deveRetornarRespostaStatusCorretos_QuandoConsultarCozinhaExistente() {
+		
+		RestAssured.given()
+		.pathParam("CozinhaId", 2)
+		.accept(ContentType.JSON)
+	.when()
+		.get("/{CozinhaId}")
+	.then()	
+		.statusCode(HttpStatus.OK.value())
+		.body("nome", equalTo("Americana"));
+	}
+	
+	@Test
+	public void deveRetornarStatus404_QuandoConsultarCozinhaInexistente() {
+		
+		RestAssured.given()
+		.pathParam("CozinhaId", 100)
+		.accept(ContentType.JSON)
+	.when()
+		.get("/{CozinhaId}")
+	.then()	
+		.statusCode(HttpStatus.NOT_FOUND.value());
 	}
 	
 	
