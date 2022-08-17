@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.projeto.domain.exception.CadastroFormaPagamentoNaoEncontradaException;
 import com.projeto.domain.exception.EntidadeEmUsoException;
