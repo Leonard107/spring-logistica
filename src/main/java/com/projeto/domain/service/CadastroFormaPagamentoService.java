@@ -16,11 +16,13 @@ public class CadastroFormaPagamentoService {
 
 	@Autowired
 	private FormaPagamentoRepository formaPagamentoRepository;
-
+	
+	@Transactional
 	public FormaPagamento salvar(FormaPagamento formaPagamento) {
 		return formaPagamentoRepository.save(formaPagamento);
 	}
-
+	
+	@Transactional
 	public void excluir(Long formaPagamentoId) {
 		try {
 			formaPagamentoRepository.deleteById(formaPagamentoId);

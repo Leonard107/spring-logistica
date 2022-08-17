@@ -2,6 +2,7 @@ package com.projeto.domain.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.projeto.domain.exception.EntidadeNaoEncontradaException;
 import com.projeto.domain.exception.RestauranteNaoEncontradoException;
@@ -21,7 +22,8 @@ public class CadastroRestauranteService {
 	
 	@Autowired
 	private CadastroCozinhaService cadastroCozinhaService;
-
+	
+	@Transactional
 	public Restaurante salvar(Restaurante restaurante) {
 		Long cozinhaId = restaurante.getCozinha().getId();
 		Cozinha cozinha = cadastroCozinhaService.buscarOuFalhar(cozinhaId);
