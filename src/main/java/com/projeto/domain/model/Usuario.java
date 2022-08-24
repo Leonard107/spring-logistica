@@ -1,6 +1,6 @@
 package com.projeto.domain.model;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +37,8 @@ public class Usuario {
 	private String senha;
 	
 	@CreationTimestamp
-	private LocalDateTime dataCadastro;
+	@Column(nullable = false, columnDefinition = "datetime")
+	private OffsetDateTime  dataCadastro;
 	
 	@ManyToMany
 	@JoinTable(name = "usuario_grupo",
