@@ -3,6 +3,7 @@ package com.projeto.api.controller;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -29,6 +30,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projeto.domain.exception.CozinhaNaoEncontradaException;
 import com.projeto.domain.exception.NegocioException;
 import com.projeto.domain.model.Restaurante;
+import com.projeto.domain.model.DTO.CozinhaDTO;
+import com.projeto.domain.model.DTO.RestauranteDTO;
 import com.projeto.domain.repository.RestauranteRepository;
 import com.projeto.domain.service.CadastroRestauranteService;
 
@@ -43,22 +46,24 @@ public class RestauranteController {
 	private CadastroRestauranteService cadastroRestauranteService;
 
 	@GetMapping
-	public List<Restaurante> Listar() {
-		return restauranteRepository.findAll();
+	public List<RestauranteDTO> Listar() {
+		return toCollectionDTO(restauranteRepository.findAll());
 	}
 
 	@GetMapping(value = "/{restauranteId}")
-	public Restaurante buscar(@PathVariable Long restauranteId) {
-
-		return cadastroRestauranteService.buscarOuFalhar(restauranteId);
+	public RestauranteDTO buscar(@PathVariable Long restauranteId) {
+		Restaurante restaurante = cadastroRestauranteService.buscarOuFalhar(restauranteId);
+				
+		return toDTO(restaurante);
 
 	}
 
+	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Restaurante adicionar(@RequestBody @Valid Restaurante restaurante) {
+	public RestauranteDTO adicionar(@RequestBody @Valid Restaurante restaurante) {
 		try {
-			return cadastroRestauranteService.salvar(restaurante);
+			return toDTO(cadastroRestauranteService.salvar(restaurante));
 		} catch (CozinhaNaoEncontradaException e) {
 			throw new NegocioException(e.getMessage());
 		}
@@ -66,14 +71,14 @@ public class RestauranteController {
 	}
 
 	@PutMapping(value = "/{restauranteId}")
-	public Restaurante atualizar(@PathVariable Long restauranteId, @RequestBody @Valid Restaurante restaurante) {
+	public RestauranteDTO atualizar(@PathVariable Long restauranteId, @RequestBody @Valid Restaurante restaurante) {
 		try {
 			Restaurante restauranteAtual = cadastroRestauranteService.buscarOuFalhar(restauranteId);
 
 			BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formasPagamento", "endereco", "dataCadastro",
 					"produtos");
 
-			return cadastroRestauranteService.salvar(restauranteAtual);
+			return toDTO(cadastroRestauranteService.salvar(restauranteAtual));
 
 		} catch (CozinhaNaoEncontradaException e) {
 			throw new NegocioException(e.getMessage());
@@ -115,6 +120,25 @@ public class RestauranteController {
 			Throwable rootCause = ExceptionUtils.getRootCause(e);
 			throw new HttpMessageNotReadableException(e.getMessage(), rootCause, serverHttpRequest);
 		}
+	}
+	
+	private RestauranteDTO toDTO(Restaurante restaurante) {
+		CozinhaDTO cozinhaDTO = new CozinhaDTO();
+		cozinhaDTO.setId(restaurante.getCozinha().getId());
+		cozinhaDTO.setNome(restaurante.getCozinha().getNome());
+		
+		RestauranteDTO restauranteDTO = new RestauranteDTO();
+		restauranteDTO.setId(restaurante.getId());
+		restauranteDTO.setNome(restaurante.getNome());
+		restauranteDTO.setTaxaFrete(restaurante.getTaxaFrete());
+		restauranteDTO.setCozinha(cozinhaDTO);
+		return restauranteDTO;
+	}
+	
+	private List<RestauranteDTO> toCollectionDTO(List<Restaurante> restaurantes){
+		return restaurantes.stream()
+				.map(restaurante -> toDTO(restaurante))
+				.collect(Collectors.toList());
 	}
 
 }
