@@ -29,9 +29,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projeto.domain.exception.CozinhaNaoEncontradaException;
 import com.projeto.domain.exception.NegocioException;
+import com.projeto.domain.model.Cozinha;
 import com.projeto.domain.model.Restaurante;
 import com.projeto.domain.model.DTO.CozinhaDTO;
 import com.projeto.domain.model.DTO.RestauranteDTO;
+import com.projeto.domain.model.input.RestauranteInput;
 import com.projeto.domain.repository.RestauranteRepository;
 import com.projeto.domain.service.CadastroRestauranteService;
 
@@ -61,8 +63,11 @@ public class RestauranteController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public RestauranteDTO adicionar(@RequestBody @Valid Restaurante restaurante) {
+	public RestauranteDTO adicionar(@RequestBody @Valid RestauranteInput restauranteInput) {
 		try {
+			
+			Restaurante restaurante = toDomainObject(restauranteInput);
+			
 			return toDTO(cadastroRestauranteService.salvar(restaurante));
 		} catch (CozinhaNaoEncontradaException e) {
 			throw new NegocioException(e.getMessage());
@@ -139,6 +144,19 @@ public class RestauranteController {
 		return restaurantes.stream()
 				.map(restaurante -> toDTO(restaurante))
 				.collect(Collectors.toList());
+	}
+	
+	private Restaurante toDomainObject(RestauranteInput restauranteInput) {
+		Restaurante restaurante = new Restaurante();
+		restaurante.setNome(restauranteInput.getNome());
+		restaurante.setTaxaFrete(restauranteInput.getTaxaFrete());
+		
+		Cozinha cozinha = new Cozinha();
+		cozinha.setId(restauranteInput.getCozinha().getId());
+		
+		restaurante.setCozinha(cozinha);
+		
+		return restaurante;
 	}
 
 }
