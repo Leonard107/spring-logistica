@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.projeto.api.assembler.RestauranteDTOAssembler;
 import com.projeto.domain.exception.CozinhaNaoEncontradaException;
 import com.projeto.domain.exception.NegocioException;
 import com.projeto.domain.model.Cozinha;
@@ -46,17 +47,20 @@ public class RestauranteController {
 
 	@Autowired
 	private CadastroRestauranteService cadastroRestauranteService;
+	
+	@Autowired
+	private RestauranteDTOAssembler restauranteDTOAssembler;
 
 	@GetMapping
 	public List<RestauranteDTO> Listar() {
-		return toCollectionDTO(restauranteRepository.findAll());
+		return restauranteDTOAssembler.toCollectionDTO(restauranteRepository.findAll());
 	}
 
 	@GetMapping(value = "/{restauranteId}")
 	public RestauranteDTO buscar(@PathVariable Long restauranteId) {
 		Restaurante restaurante = cadastroRestauranteService.buscarOuFalhar(restauranteId);
 				
-		return toDTO(restaurante);
+		return restauranteDTOAssembler.toDTO(restaurante);
 
 	}
 
@@ -68,7 +72,7 @@ public class RestauranteController {
 			
 			Restaurante restaurante = toDomainObject(restauranteInput);
 			
-			return toDTO(cadastroRestauranteService.salvar(restaurante));
+			return restauranteDTOAssembler.toDTO(cadastroRestauranteService.salvar(restaurante));
 		} catch (CozinhaNaoEncontradaException e) {
 			throw new NegocioException(e.getMessage());
 		}
@@ -83,7 +87,7 @@ public class RestauranteController {
 			BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formasPagamento", "endereco", "dataCadastro",
 					"produtos");
 
-			return toDTO(cadastroRestauranteService.salvar(restauranteAtual));
+			return restauranteDTOAssembler.toDTO(cadastroRestauranteService.salvar(restauranteAtual));
 
 		} catch (CozinhaNaoEncontradaException e) {
 			throw new NegocioException(e.getMessage());
@@ -125,25 +129,6 @@ public class RestauranteController {
 			Throwable rootCause = ExceptionUtils.getRootCause(e);
 			throw new HttpMessageNotReadableException(e.getMessage(), rootCause, serverHttpRequest);
 		}
-	}
-	
-	private RestauranteDTO toDTO(Restaurante restaurante) {
-		CozinhaDTO cozinhaDTO = new CozinhaDTO();
-		cozinhaDTO.setId(restaurante.getCozinha().getId());
-		cozinhaDTO.setNome(restaurante.getCozinha().getNome());
-		
-		RestauranteDTO restauranteDTO = new RestauranteDTO();
-		restauranteDTO.setId(restaurante.getId());
-		restauranteDTO.setNome(restaurante.getNome());
-		restauranteDTO.setTaxaFrete(restaurante.getTaxaFrete());
-		restauranteDTO.setCozinha(cozinhaDTO);
-		return restauranteDTO;
-	}
-	
-	private List<RestauranteDTO> toCollectionDTO(List<Restaurante> restaurantes){
-		return restaurantes.stream()
-				.map(restaurante -> toDTO(restaurante))
-				.collect(Collectors.toList());
 	}
 	
 	private Restaurante toDomainObject(RestauranteInput restauranteInput) {
