@@ -17,5 +17,13 @@ public class RestauranteInputDisassembler {
 	public Restaurante toDomainObject(RestauranteInput restauranteInput) {
 		return moldeMapper.map(restauranteInput, Restaurante.class);
 	}
+	
+	public void copyToDomainObejct(RestauranteInput restauranteInput, Restaurante restaurante) {
+		
+		// Para evitar org.hibernate.HibernateException
+		restaurante.setCozinha(new Cozinha());
+		
+		moldeMapper.map(restauranteInput, restaurante);
+	}
 
 }

@@ -3,7 +3,6 @@ package com.projeto.api.controller;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -31,9 +30,7 @@ import com.projeto.api.assembler.RestauranteDTOAssembler;
 import com.projeto.api.assembler.RestauranteInputDisassembler;
 import com.projeto.domain.exception.CozinhaNaoEncontradaException;
 import com.projeto.domain.exception.NegocioException;
-import com.projeto.domain.model.Cozinha;
 import com.projeto.domain.model.Restaurante;
-import com.projeto.domain.model.DTO.CozinhaDTO;
 import com.projeto.domain.model.DTO.RestauranteDTO;
 import com.projeto.domain.model.input.RestauranteInput;
 import com.projeto.domain.repository.RestauranteRepository;
@@ -84,12 +81,14 @@ public class RestauranteController {
 	}
 
 	@PutMapping(value = "/{restauranteId}")
-	public RestauranteDTO atualizar(@PathVariable Long restauranteId, @RequestBody @Valid Restaurante restaurante) {
+	public RestauranteDTO atualizar(@PathVariable Long restauranteId, @RequestBody @Valid RestauranteInput restauranteInput) {
 		try {
 			Restaurante restauranteAtual = cadastroRestauranteService.buscarOuFalhar(restauranteId);
+			
+			restauranteInputDisassembler.copyToDomainObejct(restauranteInput, restauranteAtual);
 
-			BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formasPagamento", "endereco", "dataCadastro",
-					"produtos");
+			//BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formasPagamento", "endereco", "dataCadastro",
+			//		"produtos");
 
 			return restauranteDTOAssembler.toDTO(cadastroRestauranteService.salvar(restauranteAtual));
 
@@ -99,7 +98,7 @@ public class RestauranteController {
 
 	}
 
-	@PatchMapping(value = "/{restauranteId}")
+	/*@PatchMapping(value = "/{restauranteId}")
 	public RestauranteDTO atualizarParcial(@PathVariable Long restauranteId, @RequestBody Map<String, Object> campos, HttpServletRequest request) {
 
 		Restaurante restauranteAtual = cadastroRestauranteService.buscarOuFalhar(restauranteId);
@@ -107,7 +106,7 @@ public class RestauranteController {
 		merge(campos, restauranteAtual, request);
 
 		return atualizar(restauranteId, restauranteAtual);
-	}
+	}*/
 
 	private void merge(Map<String, Object> dadosOrigem, Restaurante restauranteDestino, HttpServletRequest request) {
 		
