@@ -17,7 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.projeto.api.assembler.EstadoDTOAssembler;
+import com.projeto.api.assembler.EstadoInputDisassembler;
 import com.projeto.domain.model.Estado;
+import com.projeto.domain.model.DTO.EstadoDTO;
+import com.projeto.domain.model.input.EstadoInput;
 import com.projeto.domain.repository.EstadoRepository;
 import com.projeto.domain.service.CadastroEstadoService;
 
@@ -30,32 +34,50 @@ public class EstadoController {
 
 	@Autowired
 	private CadastroEstadoService cadastroEstadoService;
+	
+	@Autowired
+	private EstadoDTOAssembler estadoDTOAssembler;
+	
+	@Autowired
+	private EstadoInputDisassembler estadoInputDisassembler;
 
 	@GetMapping
-	public List<Estado> listar() {
-		return estadoRepository.findAll();
-
+	public List<EstadoDTO> listar() {
+		List<Estado> todosEstados = estadoRepository.findAll();
+		
+		return estadoDTOAssembler.toCollectionDTO(todosEstados);
 	}
+	
 
 	@GetMapping(value = "/{estadoId}")
-	public Estado buscar(@PathVariable Long estadoId) {
-		return cadastroEstadoService.buscarOufalhar(estadoId);
+	public EstadoDTO buscar(@PathVariable Long estadoId) {
+		 Estado estado = cadastroEstadoService.buscarOufalhar(estadoId);
+		 
+		 return estadoDTOAssembler.toDTO(estado);
 	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Estado adicionar(@RequestBody @Valid Estado estado) {
-		return cadastroEstadoService.salvar(estado);
+	public EstadoDTO adicionar(@RequestBody @Valid EstadoInput estadoInput) {
+		   Estado estado = estadoInputDisassembler.toDomainObject(estadoInput);
+		   
+		    estado = cadastroEstadoService.salvar(estado);
+		    
+		    return estadoDTOAssembler.toDTO(estado);
+		 
 	}
 
 	@PutMapping(value = "/{estadoId}")
-	public Estado atualizar(@PathVariable Long estadoId, @RequestBody @Valid Estado estado) {
+	public EstadoDTO atualizar(@PathVariable Long estadoId, @RequestBody @Valid EstadoInput estadoInput) {
 
 		Estado estadoAtual = cadastroEstadoService.buscarOufalhar(estadoId);
+		
+		estadoInputDisassembler.copyToDomainObject(estadoInput, estadoAtual);
+		//BeanUtils.copyProperties(estado, estadoAtual, "id");
 
-		BeanUtils.copyProperties(estado, estadoAtual, "id");
-
-		return cadastroEstadoService.salvar(estadoAtual);
+		 estadoAtual = cadastroEstadoService.salvar(estadoAtual);
+		 
+		 return estadoDTOAssembler.toDTO(estadoAtual);
 	}
 
 	@DeleteMapping(value = "/{estadoId}")

@@ -7,9 +7,9 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class CozinhaIdInput {
+public class EstadoIdInput {
 	
 	@NotNull
 	private Long id;
-	
+
 }
