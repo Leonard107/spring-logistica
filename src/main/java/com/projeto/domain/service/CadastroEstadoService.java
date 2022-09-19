@@ -16,7 +16,6 @@ import com.projeto.domain.repository.EstadoRepository;
 public class CadastroEstadoService {
 
 	private static final String MSG_ESTADO_EM_USO = "Estado de código %d não pode ser removido, pois está em uso";
-	private int teste = 1;
 
 	
 	@Autowired
@@ -32,6 +31,8 @@ public class CadastroEstadoService {
 		
 		try {
 			estadoRepository.deleteById(estadoId);
+			estadoRepository.flush();
+			
 		} catch (EmptyResultDataAccessException e) {
 			throw new EstadoNaoEncontradoException(estadoId);
 			
