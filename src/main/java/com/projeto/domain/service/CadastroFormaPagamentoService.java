@@ -6,14 +6,15 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.projeto.domain.exception.CadastroFormaPagamentoNaoEncontradaException;
 import com.projeto.domain.exception.EntidadeEmUsoException;
-import com.projeto.domain.exception.EntidadeNaoEncontradaException;
+import com.projeto.domain.exception.FormaPagamentoNaoEncontradaException;
 import com.projeto.domain.model.FormaPagamento;
 import com.projeto.domain.repository.FormaPagamentoRepository;
 
 @Service
 public class CadastroFormaPagamentoService {
+	
+	private static final String MSG_FORMA_PAGAMENTO_EM_USO = "Forma de pagamento de código %d não pode ser removida, pois está em uso";
 
 	@Autowired
 	private FormaPagamentoRepository formaPagamentoRepository;
@@ -27,13 +28,20 @@ public class CadastroFormaPagamentoService {
 	public void excluir(Long formaPagamentoId) {
 		try {
 			formaPagamentoRepository.deleteById(formaPagamentoId);
+			formaPagamentoRepository.flush();
+			
 		} catch (EmptyResultDataAccessException e) {
-			throw new CadastroFormaPagamentoNaoEncontradaException(formaPagamentoId);
+			throw new FormaPagamentoNaoEncontradaException(formaPagamentoId);
 			
 		} catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(
-					String.format("Forma de Pagamento de código %d não pode ser removido, pois está em uso", formaPagamentoId));
+					String.format(MSG_FORMA_PAGAMENTO_EM_USO, formaPagamentoId));
 		}
+	}
+	
+	public FormaPagamento buscarOuFalhar(Long formaPagamentoId) {
+		return formaPagamentoRepository.findById(formaPagamentoId)
+				.orElseThrow(() -> new FormaPagamentoNaoEncontradaException(formaPagamentoId));
 	}
 
 }

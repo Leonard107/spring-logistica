@@ -17,9 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.projeto.api.assembler.FormaPagamentoDTOAssembler;
+import com.projeto.api.assembler.FormaPagamentoInputDisassembler;
 import com.projeto.domain.exception.EntidadeEmUsoException;
 import com.projeto.domain.exception.EntidadeNaoEncontradaException;
 import com.projeto.domain.model.FormaPagamento;
+import com.projeto.domain.model.DTO.FormaPagamentoDTO;
+import com.projeto.domain.model.input.FormaPagamentoInput;
 import com.projeto.domain.repository.FormaPagamentoRepository;
 import com.projeto.domain.service.CadastroFormaPagamentoService;
 
@@ -29,71 +33,63 @@ public class FormaPagamentoController {
 
 	@Autowired
 	private FormaPagamentoRepository formaPagamentoRepository;
-	
+
 	@Autowired
 	private CadastroFormaPagamentoService cadastroFormaPagamentoService;
 
+	@Autowired
+	private FormaPagamentoDTOAssembler formaPagamentoDTOAssembler;
+
+	@Autowired
+	private FormaPagamentoInputDisassembler formaPagamentoInputDisassembler;
 
 	@GetMapping
-	public List<FormaPagamento> listar() {
-		 return formaPagamentoRepository.findAll();
-		
+	public List<FormaPagamentoDTO> listar() {
+
+		List<FormaPagamento> todasformasPagamentos = formaPagamentoRepository.findAll();
+
+		return formaPagamentoDTOAssembler.toCollectionDTO(todasformasPagamentos);
+
 	}
 
 	@GetMapping(value = "/{pagamentoId}")
-	public ResponseEntity<FormaPagamento> buscar(@PathVariable Long pagamentoId) {
-		Optional<FormaPagamento> formaPagamento = formaPagamentoRepository.findById(pagamentoId);
+	public FormaPagamentoDTO buscar(@PathVariable Long pagamentoId) {
 
-		if (formaPagamento.isPresent()) {
-			return ResponseEntity.ok(formaPagamento.get());
+		FormaPagamento formaPagamento = cadastroFormaPagamentoService.buscarOuFalhar(pagamentoId);
+		formaPagamentoDTOAssembler.toDTO(formaPagamento);
 
-		}
+		return formaPagamentoDTOAssembler.toDTO(formaPagamento);
 
-		return ResponseEntity.notFound().build();
 	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public FormaPagamento adicionar(@RequestBody FormaPagamento formaPagamento) {
-		return cadastroFormaPagamentoService.salvar(formaPagamento);
+	public FormaPagamentoDTO adicionar(@RequestBody FormaPagamentoInput formaPagamentoInput) {
+
+		FormaPagamento formaDePagamento = formaPagamentoInputDisassembler.toDomainObject(formaPagamentoInput);
+
+		formaDePagamento = cadastroFormaPagamentoService.salvar(formaDePagamento);
+
+		return formaPagamentoDTOAssembler.toDTO(formaDePagamento);
 	}
 
 	@PutMapping(value = "/{formaPagamentoId}")
-	public ResponseEntity<FormaPagamento> atualizar(@PathVariable Long formaPagamentoId, @RequestBody FormaPagamento formaPagamento) {
+	public FormaPagamentoDTO atualizar(@PathVariable Long formaPagamentoId,
+			@RequestBody FormaPagamentoInput formaPagamentoInput) {
+		
+		FormaPagamento formpagamentoAtual = cadastroFormaPagamentoService.buscarOuFalhar(formaPagamentoId);
 
-		Optional<FormaPagamento> formpagamentoAtual = formaPagamentoRepository.findById(formaPagamentoId);
+		formaPagamentoInputDisassembler.copyToDomainObject(formaPagamentoInput, formpagamentoAtual);
+		
+		formpagamentoAtual = cadastroFormaPagamentoService.salvar(formpagamentoAtual);
 
-		if (formpagamentoAtual.isPresent()) {
-
-			BeanUtils.copyProperties(formaPagamento, formpagamentoAtual.get(), "id");
-
-			FormaPagamento formaPagamentoSalvo = cadastroFormaPagamentoService.salvar(formpagamentoAtual.get());
-
-			return ResponseEntity.ok(formaPagamentoSalvo);
-
-		}
-
-		return ResponseEntity.notFound().build();
+		return formaPagamentoDTOAssembler.toDTO(formpagamentoAtual);
 
 	}
 
 	@DeleteMapping(value = "/{formaPagamentoId}")
-	public ResponseEntity<FormaPagamento> remover(@PathVariable Long formaPagamentoId) {
-		
-		try {
-			
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+	public void remover(@PathVariable Long formaPagamentoId) {
 			cadastroFormaPagamentoService.excluir(formaPagamentoId);
-			
-			return ResponseEntity.noContent().build();
-			
-		} catch (EntidadeNaoEncontradaException e) {
-			
-			return ResponseEntity.notFound().build();
-			
-		} catch (EntidadeEmUsoException e) {
-			
-			return ResponseEntity.status(HttpStatus.CONFLICT).build();
-
-		}
 	}
 }
