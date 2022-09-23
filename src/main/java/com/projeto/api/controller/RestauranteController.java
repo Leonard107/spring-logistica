@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projeto.api.assembler.RestauranteDTOAssembler;
 import com.projeto.api.assembler.RestauranteInputDisassembler;
+import com.projeto.domain.exception.CidadeNaoEncontradaException;
 import com.projeto.domain.exception.CozinhaNaoEncontradaException;
 import com.projeto.domain.exception.NegocioException;
 import com.projeto.domain.model.Restaurante;
@@ -75,7 +76,7 @@ public class RestauranteController {
 			Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
 			
 			return restauranteDTOAssembler.toDTO(cadastroRestauranteService.salvar(restaurante));
-		} catch (CozinhaNaoEncontradaException e) {
+		} catch (CozinhaNaoEncontradaException | CidadeNaoEncontradaException e ) {
 			throw new NegocioException(e.getMessage());
 		}
 
@@ -93,7 +94,7 @@ public class RestauranteController {
 
 			return restauranteDTOAssembler.toDTO(cadastroRestauranteService.salvar(restauranteAtual));
 
-		} catch (CozinhaNaoEncontradaException e) {
+		} catch (CozinhaNaoEncontradaException | CidadeNaoEncontradaException e) {
 			throw new NegocioException(e.getMessage());
 		}
 

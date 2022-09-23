@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.projeto.domain.exception.EntidadeNaoEncontradaException;
 import com.projeto.domain.exception.RestauranteNaoEncontradoException;
+import com.projeto.domain.model.Cidade;
 import com.projeto.domain.model.Cozinha;
 import com.projeto.domain.model.Restaurante;
 import com.projeto.domain.repository.CozinhaRepository;
@@ -23,12 +24,19 @@ public class CadastroRestauranteService {
 	@Autowired
 	private CadastroCozinhaService cadastroCozinhaService;
 	
+	@Autowired
+	private CadastroCidadeService cadastroCidadeService;
+	
 	@Transactional
 	public Restaurante salvar(Restaurante restaurante) {
 		Long cozinhaId = restaurante.getCozinha().getId();
+		Long cidadeId = restaurante.getEndereco().getCidade().getId();
+		
 		Cozinha cozinha = cadastroCozinhaService.buscarOuFalhar(cozinhaId);
+		Cidade cidade = cadastroCidadeService.buscarOuFalhar(cidadeId);
 
 		restaurante.setCozinha(cozinha);
+		restaurante.getEndereco().setCidade(cidade);
 
 		return restauranteRepository.save(restaurante);
 
