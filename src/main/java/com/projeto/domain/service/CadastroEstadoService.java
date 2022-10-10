@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.projeto.domain.exception.EntidadeEmUsoException;
-import com.projeto.domain.exception.EntidadeNaoEncontradaException;
 import com.projeto.domain.exception.EstadoNaoEncontradoException;
 import com.projeto.domain.model.Estado;
 import com.projeto.domain.repository.EstadoRepository;
