@@ -8,6 +8,7 @@ import com.projeto.domain.exception.EntidadeNaoEncontradaException;
 import com.projeto.domain.exception.RestauranteNaoEncontradoException;
 import com.projeto.domain.model.Cidade;
 import com.projeto.domain.model.Cozinha;
+import com.projeto.domain.model.FormaPagamento;
 import com.projeto.domain.model.Restaurante;
 import com.projeto.domain.repository.CozinhaRepository;
 import com.projeto.domain.repository.RestauranteRepository;
@@ -26,6 +27,9 @@ public class CadastroRestauranteService {
 	
 	@Autowired
 	private CadastroCidadeService cadastroCidadeService;
+	
+	@Autowired
+	private CadastroFormaPagamentoService cadastroFormaPagamentoService;
 	
 	@Transactional
 	public Restaurante salvar(Restaurante restaurante) {
@@ -55,6 +59,22 @@ public class CadastroRestauranteService {
 		
 		restauranteAtual.inativar();
 		
+	}
+	
+	@Transactional
+	public void desassociarFormaPagamento(Long restauranteId, Long formaPagamentoId) {
+		Restaurante restaurante = buscarOuFalhar(restauranteId);
+		FormaPagamento formaPagamento = cadastroFormaPagamentoService.buscarOuFalhar(formaPagamentoId);
+		
+		restaurante.removerFormaPagamento(formaPagamento);
+	}
+	
+	@Transactional
+	public void associarFormaPagamento(Long restauranteId, Long formaPagamentoId) {
+		Restaurante restaurante = buscarOuFalhar(restauranteId);
+		FormaPagamento formaPagamento = cadastroFormaPagamentoService.buscarOuFalhar(formaPagamentoId);
+		
+		restaurante.adicionarFormaPagamento(formaPagamento);
 	}
 
 	public Restaurante buscarOuFalhar(long restauranteId) {
