@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.projeto.domain.exception.EntidadeEmUsoException;
 import com.projeto.domain.exception.GrupoNaoEncontradoException;
 import com.projeto.domain.model.Grupo;
+import com.projeto.domain.model.Permissao;
 import com.projeto.domain.repository.GrupoRepository;
 
 @Service
@@ -18,6 +19,9 @@ public class CadastroGrupoService {
 
 	@Autowired
 	private GrupoRepository grupoRepository;
+	
+	@Autowired
+	private CadastroPermissaoService cadastroPermissaoService;
 
 	@Transactional
 	public Grupo salvar(Grupo grupo) {
@@ -37,6 +41,20 @@ public class CadastroGrupoService {
 			throw new EntidadeEmUsoException(String.format(MSG_GRUPO_EM_USO, grupoId));
 		}
 				
+	}
+	
+	@Transactional
+	public void desassociarPermissao(Long grupoId, Long permissaoId) {
+		Grupo grupo = buscarOuFalhar(grupoId);
+		Permissao permissao = cadastroPermissaoService.buscarOuFalhar(permissaoId);
+		grupo.removerPermissao(permissao);
+	}
+	
+	@Transactional
+	public void associarPermissao(Long grupoId, Long permissaoId) {
+		Grupo grupo = buscarOuFalhar(grupoId);
+		Permissao permissao = cadastroPermissaoService.buscarOuFalhar(permissaoId);
+		grupo.adicionarPermissao(permissao);
 	}
 	
 	public Grupo buscarOuFalhar(Long grupoId) {

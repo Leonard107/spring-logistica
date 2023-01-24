@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.projeto.domain.exception.EntidadeEmUsoException;
-import com.projeto.domain.exception.FormaPagamentoNaoEncontradaException;
+import com.projeto.domain.exception.FormaPagamentoNaoEncontradoException;
 import com.projeto.domain.model.FormaPagamento;
 import com.projeto.domain.repository.FormaPagamentoRepository;
 
@@ -31,7 +31,7 @@ public class CadastroFormaPagamentoService {
 			formaPagamentoRepository.flush();
 			
 		} catch (EmptyResultDataAccessException e) {
-			throw new FormaPagamentoNaoEncontradaException(formaPagamentoId);
+			throw new FormaPagamentoNaoEncontradoException(formaPagamentoId);
 			
 		} catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(
@@ -41,7 +41,7 @@ public class CadastroFormaPagamentoService {
 	
 	public FormaPagamento buscarOuFalhar(Long formaPagamentoId) {
 		return formaPagamentoRepository.findById(formaPagamentoId)
-				.orElseThrow(() -> new FormaPagamentoNaoEncontradaException(formaPagamentoId));
+				.orElseThrow(() -> new FormaPagamentoNaoEncontradoException(formaPagamentoId));
 	}
 
 }
